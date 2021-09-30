@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+
+	<ui:define name="corpo">
+		<title>Consulta de Locacão</title>
+
+		<h:form id="listDevolução">
+
+			<p:growl id="growl" showDetail="true" life="4000" />
+
+			<p:tabView>
+				<p:tab id="ltDevolução" title="Dados da Devolução">
+					<p:panel id="pnLocacaos">
+						<h:panelGrid columns="2">
+
+							<h:panelGrid columns="3">
+
+								<p:outputLabel value="Locações:" />
+								<p:selectOneMenu filter="true"
+									value="#{devolucaoBacking.locacao}" size="100">
+									<f:selectItem itemValue="" itemLabel="- Selecione Locação -" />
+									<f:selectItems value="#{devolucaoBacking.listaLocacoes}"
+										var="locacao"
+										itemLabel="Cód: #{locacao.idLocacao} - #{locacao.dataLocacao} - #{locacao.clienteIdCliente.nome}"
+										itemValue="#{locacao.idLocacao}" />
+									<p:ajax event="change" update="@form"
+										listener="#{devolucaoBacking.desbloqueioDevolucao}" />
+								</p:selectOneMenu>
+
+								<p:commandButton id="btnSelecionar"
+									disabled="#{devolucaoBacking.bloqueio}"
+									value="Carregar Locação"
+									action="#{devolucaoBacking.carregarLocacao}" update="@form"
+									style="width: 200px; text-align: center" />
+
+							</h:panelGrid>
+
+						</h:panelGrid>
+
+						<p:spacer height="20" />
+
+						<p:dataTable id="tabelaDevolucao"
+							value="#{devolucaoBacking.listaFilmes}" var="filme"
+							emptyMessage="Nenhum filme foi selecionado!">
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Código" />
+								</f:facet>
+								<h:outputText value="#{filme.idFilme}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Nome" />
+								</f:facet>
+								<h:outputText value="#{filme.nome}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Disponível" />
+								</f:facet>
+								<h:outputText value="#{filme.disponivel}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Valor" />
+								</f:facet>
+								<h:outputText value="#{filme.valorEditado}" />
+							</p:column>
+
+						</p:dataTable>
+
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+							<div align="center">
+								<p:commandButton value="Sim" type="button"
+									styleClass="ui-confirmdialog-yes" />
+								<p:commandButton value="Não" type="button"
+									styleClass="ui-confirmdialog-no" />
+							</div>
+						</p:confirmDialog>
+					</p:panel>
+
+				</p:tab>
+			</p:tabView>
+
+			<p:spacer />
+
+			<h:panelGrid columns="2">
+				<p:commandButton id="btnFinalizar" value="Finalizar Devolução"
+					disabled="#{!devolucaoBacking.carregado}"
+					action="#{devolucaoBacking.salvar}" update="@form" />
+				<p:commandButton id="btnCancelar" value="Cancelar"
+					disabled="#{!devolucaoBacking.carregado}"
+					action="#{devolucaoBacking.cancelar}" update="@form" />
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>
